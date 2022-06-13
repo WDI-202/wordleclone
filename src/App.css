@@ -36,3 +36,36 @@
     transform: rotate(360deg);
   }
 }
+
+.wordle-header {
+  color: white;
+}
+
+.wordle-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.wordle-grid-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.wordle-grid-letter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: solid 1px white;
+  padding: 10px;
+  margin: 10px;
+  width: 25px;
+  height: 25px;
+}
+
+.wordle-grid-letter-true {
+  background-color: green;
+}
+
+.wordle-grid-letter-false {
+ background-color: grey;
+}
