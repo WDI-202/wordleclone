@@ -1,9 +1,3 @@
-/* 
-    Nested Keys
-    Value on div for e.target.value
-    Pass by reference
-*/
-
 import React, { useState } from "react";
 import "./App.css";
 
@@ -12,7 +6,7 @@ const rand = Math.floor(Math.random() * wordleArr.length);
 const answer = wordleArr[rand];
 
 const defaultGuessList = [
-  ["", "", "", "", ""],
+  ["R", "E", "A", "C", "T"],
   ["", "", "", "", ""],
   ["", "", "", "", ""],
   ["", "", "", "", ""],
@@ -32,15 +26,7 @@ function App() {
   const [wordleLetterIndex, setWordleLetterIndex] = useState(0);
 
   const handleKeyEvent = (newLetter) => {
-    const updatedWordleGuessList = JSON.parse(JSON.stringify(wordleGuessList));
-
-    const newWordleRow = updatedWordleGuessList[wordleGuessIndex];
-    newWordleRow[wordleLetterIndex] = newLetter;
-
-    if (wordleLetterIndex < 4) {
-      setWordleLetterIndex(wordleLetterIndex + 1);
-    }
-    setWordleGuessList(updatedWordleGuessList)
+    console.log("handleKeyEvent ", newLetter)
   };
 
   return (
@@ -49,7 +35,7 @@ function App() {
         <h1 className="Cool">Wordle Copy</h1>
         <div>Answer: {answer}</div>
         <ColumnComponent wordleGuessList={wordleGuessList} />
-        <KeyBoardComponent handleKeyEvent={handleKeyEvent} />
+        <KeyBoardComponent handleKeyEvent={handleKeyEvent} keyBoardArr={keyBoardArr}/>
       </header>
     </div>
   );
@@ -90,15 +76,18 @@ const ColumnComponent = (props) => {
   );
 };
 
-const KeyComponent = ({handleKeyEvent, letter}) => {
+const KeyBoardComponent = (props) => {
   return (
-    <div
-      className="Keyboard-key"
-      onClick={(e)=>{
-        handleKeyEvent(letter)
-      }}
-    >
-      {letter}
+    <div className="Keyboard-grid">
+      {props.keyBoardArr.map((row, index) => {
+        return (
+          <KeyRowComponent
+            key={index}
+            keyRow={row}
+            handleKeyEvent={props.handleKeyEvent}
+          ></KeyRowComponent>
+        );
+      })}
     </div>
   );
 };
@@ -119,73 +108,18 @@ const KeyRowComponent = (props) => {
   );
 };
 
-const KeyBoardComponent = (props) => {
+const KeyComponent = (props) => {
   return (
-    <div className="Keyboard-grid">
-      {keyBoardArr.map((row, index) => {
-        return (
-          <KeyRowComponent
-            key={index}
-            keyRow={row}
-            handleKeyEvent={props.handleKeyEvent}
-          ></KeyRowComponent>
-        );
-      })}
+    <div
+      className="Keyboard-key"
+      onClick={()=>{
+        console.log("key component")
+        props.handleKeyEvent(props.letter)
+      }}
+    >
+      {props.letter}
     </div>
   );
-};
-
-const setKeyValue = (newGuess, indexCoord) => {
-  if (newGuess === "Delete") {
-    return "";
-  }
-  if (newGuess === "Enter") {
-    // Do Something
-    return;
-  }
-  if (indexCoord <= 4) {
-    return newGuess;
-  }
-  return;
-};
-
-const setIndexValue = (newGuess, indexCoord) => {
-  if (newGuess === "Delete") {
-    return indexCoord;
-  }
-  if (newGuess === "Enter") {
-    // Do Something
-    return;
-  }
-  if (indexCoord <= 4) {
-    return newGuess;
-  }
-  return indexCoord + 1;
-  /* if (indexCoord <= 4 && newGuess === "Delete") {
-    return indexCoord;
-  }
-  if (indexCoord <= 4 && newGuess !== "Delete" && newGuess !== "Enter") {
-    return indexCoord + 1;
-  }
-  return indexCoord; */
-};
-
-const handleDelete = (newGuess, indexToSet) => {
-  /* if (newGuess === "Delete") {
-    return indexCoord;
-  }
-  if (newGuess === "Enter") {
-    // Do Something
-    return;
-  }
-  if (indexCoord <= 4) {
-    return newGuess;
-  }
-  return indexCoord + 1; */
-  if (newGuess === "Delete" && indexToSet > 0 && indexToSet <= 5) {
-    return indexToSet - 1;
-  }
-  return indexToSet;
 };
 
 export default App;
