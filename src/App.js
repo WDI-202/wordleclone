@@ -10,7 +10,7 @@ const defaultGuessList = [
   ["", "", "", "", ""],
 ]
 
-function WordleClone() {
+function App() {
   const [wordleGuessList, setWordleGuessList] = useState([...defaultGuessList])
   return (
     <div className="App">
@@ -65,4 +65,4 @@ const WordleGridLetter = (props) => {
   )
 }
 
-export default WordleClone;
+export default App;
