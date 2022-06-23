@@ -9,7 +9,7 @@ import {
   checkIsValidGuess,
   checkGameState,
   createWordleLetter,
-  calculateGuessResult
+  calculateGuessResult,
 } from "./Utils";
 import "./App.css";
 
@@ -49,19 +49,37 @@ const letters = [
 ];
 
 function App() {
-
   const guesses = 6;
   const lettersPerGuess = 5;
-  const todaysWordleAnswer = pickWordleAnswer()
+  const todaysWordleAnswer = pickWordleAnswer();
+
+  const wordleGuessListLS = JSON.parse(localStorage.getItem("wordleGuessList"));
+  const wordleGuessIndexLS = parseInt(localStorage.getItem("wordleGuessIndex"));
+  const wordleLetterIndexLS = parseInt(localStorage.getItem("wordleLetterIndex"));
+  const gameStateLS = localStorage.getItem("gameState");
+  const gameMessageLS = localStorage.getItem("gameMessage");
 
   const [wordleGuessList, setWordleGuessList] = useState(
-    deepClone(createEmptyGuessesArray(guesses, lettersPerGuess))
+    wordleGuessListLS
+      ? wordleGuessListLS
+      : deepClone(createEmptyGuessesArray(guesses, lettersPerGuess))
   );
-  const [wordleGuessIndex, setWordleGuessIndex] = useState(0);
-  const [wordleLetterIndex, setWordleLetterIndex] = useState(0);
-  const [gameState, setGameState] = useState(GAME_STATE_ENUM.playing); //"playing", "won", "lost"
+  const [wordleGuessIndex, setWordleGuessIndex] = useState(
+    wordleGuessIndexLS ? wordleGuessIndexLS : 0
+  );
+  const [wordleLetterIndex, setWordleLetterIndex] = useState(
+    wordleLetterIndexLS ? wordleLetterIndexLS : 0
+  );
+  const [gameState, setGameState] = useState(
+    gameStateLS ? gameStateLS : GAME_STATE_ENUM.playing
+  ); //"playing", "won", "lost"
+  const [gameMessage, setGameMessage] = useState(
+    gameMessageLS
+      ? gameMessageLS
+      : createWordleMessage(GAME_STATE_ENUM.playing, todaysWordleAnswer)
+  );
+
   const [wordleAnswer, setWordleAnswer] = useState(todaysWordleAnswer);
-  const [gameMessage, setGameMessage] = useState(createWordleMessage(GAME_STATE_ENUM.playing, todaysWordleAnswer));
 
   useEffect(() => {
     window.addEventListener("keyup", handleKeyPress);
@@ -73,11 +91,11 @@ function App() {
   const handleKeyPress = ({ key }) => {
     if (key === "Enter") {
       console.log("Enter key handler");
-      handleEnterKey()
+      handleEnterKey();
     }
     if (key === "Backspace") {
       console.log("Backspace key handler");
-      handleBackspace()
+      handleBackspace();
     }
     if (letters.includes(key.toUpperCase())) {
       handleKeyEvent(key.toUpperCase());
@@ -85,13 +103,11 @@ function App() {
   };
 
   const handleKeyEvent = (letter) => {
-
     const newLetter = createWordleLetter(letter.toUpperCase(), null);
     const wordleGuessListCopy = deepClone(wordleGuessList);
 
     wordleGuessListCopy[wordleGuessIndex][wordleLetterIndex] = newLetter;
 
-    
     if (wordleLetterIndex === 5) {
       return;
     }
@@ -109,42 +125,56 @@ function App() {
 
     setWordleGuessList(wordleGuessListCopy);
     setWordleLetterIndex(wordleLetterIndex - 1);
-
   };
   const handleEnterKey = () => {
     const wordleGuessListCopy = deepClone(wordleGuessList);
-    const currentGuess = wordleGuessList[wordleGuessIndex]
-    const currentGuessWord = currentGuess.map(({letter})=>letter).join("").toLowerCase()
+    const currentGuess = wordleGuessList[wordleGuessIndex];
+    const currentGuessWord = currentGuess
+      .map(({ letter }) => letter)
+      .join("")
+      .toLowerCase();
     const isValidGuess = checkIsValidGuess(currentGuessWord);
-    const newGameState = checkGameState(currentGuessWord, wordleAnswer, wordleGuessIndex)
+    const newGameState = checkGameState(
+      currentGuessWord,
+      wordleAnswer,
+      wordleGuessIndex
+    );
 
     if (!isValidGuess) {
       //ToDo: refactor to use createWordleMessage
-      setGameMessage("Your guess was not valid. Please try again!")
+      setGameMessage("Your guess was not valid. Please try again!");
       return;
     }
 
     if (gameState !== GAME_STATE_ENUM.playing) {
-      return;  
+      return;
     }
 
+    const newGameMessage = createWordleMessage(newGameState, wordleAnswer);
     const guessResult = calculateGuessResult(currentGuess, wordleAnswer);
-    wordleGuessListCopy[wordleGuessIndex] = guessResult
-    setWordleGuessList(wordleGuessListCopy)
- 
+    wordleGuessListCopy[wordleGuessIndex] = guessResult;
+
+    setWordleGuessList(wordleGuessListCopy);
+    localStorage.setItem(
+      "wordleGuessList",
+      JSON.stringify(wordleGuessListCopy)
+    );
+
     //Set guess to next row
-    setWordleGuessIndex(wordleGuessIndex + 1)
-    setWordleLetterIndex(0)
+    setWordleGuessIndex(wordleGuessIndex + 1);
+    setWordleLetterIndex(0);
+    localStorage.setItem("wordleGuessIndex", wordleGuessIndex + 1);
+    localStorage.setItem("wordleLetterIndex", 0);
 
     //Set game message
-    const newGameMessage = createWordleMessage(newGameState, wordleAnswer)
-    setGameMessage(newGameMessage)
+    setGameMessage(newGameMessage);
+    localStorage.setItem("gameMessage", newGameMessage);
 
     //Update game state
-    setGameState(newGameState)
+    setGameState(newGameState);
+    localStorage.setItem("gameState", newGameState);
   };
-  
-  
+
   return (
     <div className="App">
       <header className="App-header">
@@ -162,7 +192,11 @@ function App() {
 
 const LetterComponent = (props) => {
   return (
-    <div className={`Wordle-square Wordle-square-${props.letterObject.color ? props.letterObject.color : "empty"}`}>
+    <div
+      className={`Wordle-square Wordle-square-${
+        props.letterObject.color ? props.letterObject.color : "empty"
+      }`}
+    >
       {props.letterObject.letter}
     </div>
   );
