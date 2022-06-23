@@ -37,18 +37,6 @@
   }
 }
 
-.Wordle-square {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 75px;
-  height: 75px;
-  background-color: #333333;
-  border-radius: 20%;
-  border: medium solid grey;
-  margin: 5px;
-}
-
 .Wordle-row {
   display: flex;
   flex-direction: row;
@@ -82,3 +70,27 @@
   flex-direction: column;
   justify-content: space-evenly;
 }
+
+.Wordle-square {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75px;
+  height: 75px;
+  border-radius: 20%;
+  border: medium solid grey;
+  margin: 5px;
+}
+
+.Wordle-square-green {
+  background-color: green;
+}
+
+.Wordle-square-grey {
+  background-color: #333333;
+}
+
+.Wordle-square-red {
+  background-color: red;
+}
+
