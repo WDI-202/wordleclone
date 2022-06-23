@@ -37,35 +37,60 @@
   }
 }
 
-.wordle-header {
-  color: white;
-}
-
-.wordle-grid {
-  display: flex;
-  flex-direction: column;
-}
-
-.wordle-grid-row {
+.Wordle-row {
   display: flex;
   flex-direction: row;
 }
 
-.wordle-grid-letter {
+.Wordle-column {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  border: solid 1px white;
-  padding: 10px;
-  margin: 10px;
-  width: 25px;
-  height: 25px;
 }
 
-.wordle-grid-letter-true {
+.Keyboard-key {
+  display: flex;
+  flex-grow: 2;
+  background-color: slategray;
+  border-radius: 10%;
+  padding: 7px 18px;
+  margin: 3px;
+  height: 35px;
+  justify-content: center;
+  align-items: center;
+}
+
+.Keyboard-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.Keyboard-grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.Wordle-square {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75px;
+  height: 75px;
+  border-radius: 20%;
+  border: medium solid grey;
+  margin: 5px;
+}
+
+.Wordle-square-green {
   background-color: green;
 }
 
-.wordle-grid-letter-false {
- background-color: grey;
+.Wordle-square-grey {
+  background-color: #333333;
 }
+
+.Wordle-square-red {
+  background-color: red;
+}
+
