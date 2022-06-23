@@ -7,7 +7,9 @@ import {
   createWordleMessage,
   deepClone,
   checkIsValidGuess,
-  checkGameState
+  checkGameState,
+  createWordleLetter,
+  calculateGuessResult
 } from "./Utils";
 import "./App.css";
 
@@ -84,7 +86,7 @@ function App() {
 
   const handleKeyEvent = (letter) => {
 
-    const newLetter = letter.toUpperCase();
+    const newLetter = createWordleLetter(letter.toUpperCase(), null);
     const wordleGuessListCopy = deepClone(wordleGuessList);
 
     wordleGuessListCopy[wordleGuessIndex][wordleLetterIndex] = newLetter;
@@ -110,9 +112,11 @@ function App() {
 
   };
   const handleEnterKey = () => {
-    const currentGuess = wordleGuessList[wordleGuessIndex].join("").toLowerCase()
-    const isValidGuess = checkIsValidGuess(currentGuess);
-    const newGameState = checkGameState(currentGuess, wordleAnswer, wordleGuessIndex)
+    const wordleGuessListCopy = deepClone(wordleGuessList);
+    const currentGuess = wordleGuessList[wordleGuessIndex]
+    const currentGuessWord = currentGuess.map(({letter})=>letter).join("").toLowerCase()
+    const isValidGuess = checkIsValidGuess(currentGuessWord);
+    const newGameState = checkGameState(currentGuessWord, wordleAnswer, wordleGuessIndex)
 
     if (!isValidGuess) {
       //ToDo: refactor to use createWordleMessage
@@ -120,15 +124,24 @@ function App() {
       return;
     }
 
-    if (gameState === GAME_STATE_ENUM.playing) {
-      setWordleGuessIndex(wordleGuessIndex + 1)
-      setWordleLetterIndex(0)
+    if (gameState !== GAME_STATE_ENUM.playing) {
+      return;  
     }
 
-    const newGameMessage = createWordleMessage(newGameState, wordleAnswer)
+    const guessResult = calculateGuessResult(currentGuess, wordleAnswer);
+    wordleGuessListCopy[wordleGuessIndex] = guessResult
+    setWordleGuessList(wordleGuessListCopy)
+ 
+    //Set guess to next row
+    setWordleGuessIndex(wordleGuessIndex + 1)
+    setWordleLetterIndex(0)
 
-    setGameState(newGameState)
+    //Set game message
+    const newGameMessage = createWordleMessage(newGameState, wordleAnswer)
     setGameMessage(newGameMessage)
+
+    //Update game state
+    setGameState(newGameState)
   };
   
   
@@ -148,16 +161,9 @@ function App() {
 }
 
 const LetterComponent = (props) => {
-/*   let letterClass = "Wordle-square-grey";
-  if (props.letterObject.isCorrect === true) {
-    letterClass = "Wordle-square-green";
-  }
-  if (props.letterObject.isCorrect === false) {
-    letterClass = "Wordle-square-red";
-  } */
   return (
-    <div className={`Wordle-square`}>
-      {props.letter}
+    <div className={`Wordle-square Wordle-square-${props.letterObject.color ? props.letterObject.color : "empty"}`}>
+      {props.letterObject.letter}
     </div>
   );
 };
@@ -165,11 +171,11 @@ const LetterComponent = (props) => {
 const RowComponent = (props) => {
   return (
     <div className="Wordle-row">
-      {props.row.map((letter, index) => {
+      {props.row.map((letterObject, index) => {
         return (
           <LetterComponent
             key={`square-component-${index}`}
-            letter={letter}
+            letterObject={letterObject}
           ></LetterComponent>
         );
       })}

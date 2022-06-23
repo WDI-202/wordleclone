@@ -78,7 +78,7 @@
   width: 75px;
   height: 75px;
   border-radius: 20%;
-  border: medium solid grey;
+  border: medium solid white;
   margin: 5px;
 }
 
@@ -87,10 +87,10 @@
 }
 
 .Wordle-square-grey {
-  background-color: #333333;
+  background-color: grey;
 }
 
-.Wordle-square-red {
-  background-color: red;
+.Wordle-square-yellow {
+  background-color: rgb(168, 168, 38);
 }
 
