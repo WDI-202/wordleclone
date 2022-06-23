@@ -10,7 +10,7 @@ const defaultGuessList = [
   ["", "", "", "", ""],
 ]
 
-function App() {
+function Wordle() {
   const [wordleGuessList, setWordleGuessList] = useState([...defaultGuessList])
   return (
     <div className="App">
@@ -65,27 +65,4 @@ const WordleGridLetter = (props) => {
   )
 }
 
-export default App;
-
-/*
-Use import/export syntax with react
-User require/module.export syntax with express
-
-// Default Export / Only exporting 1 thing
-export default App;
-import App from "./app.js"
-
-module.exports = App
-const App = require("./app.js")
-
----
-
-// Module Export / Exporting multiple things
-export App
-import { App } from "./app.js"
-
-module.exports = {
-  App: App
-}
-const { App } = require("./app.js") 
-*/
+export default Wordle;
